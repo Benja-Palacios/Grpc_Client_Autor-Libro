@@ -20,42 +20,27 @@ namespace Api.Microservice.Autor.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Unit>> Crear([FromForm] AutorDto data)
+        public async Task<ActionResult<Unit>> Crear(Nuevo.Ejecuta data)
         {
-            var idAutor = await _mediator.Send(new Nuevo.Ejecuta
+            var result = await _mediator.Send(data);
+
+            if (result.Equals(null))
             {
-                Nombre = data.Nombre,
-                Apellido = data.Apellido,
-                FechaNacimiento = data.FechaNacimiento
-            });
-
-            if (!data.Imagen.Equals(null)) { 
-                using var ms = new MemoryStream();
-                await data.Imagen.CopyToAsync(ms);
-                var imagenBytes = ms.ToArray();
-
-                var grpcRequest = new ImagenRequest
-                {
-                    Contenido = Google.Protobuf.ByteString.CopyFrom(imagenBytes),
-                    IdAutorLibro = idAutor
-                };
-
-                var grpcResponse = await _grpcClient.GuardarImagenAsync(grpcRequest);
-                if (!grpcResponse.Mensaje.Equals("Imagen guardada correctamente.")) {
-                    return BadRequest("Error al guardar la imagen.");
-                }
+                return BadRequest("Error al guardar el autor o la imagen.");
             }
-            return Ok();
+
+            return Ok(result);
         }
 
         [HttpGet]
         public async Task<ActionResult<List<AutorDto>>> GetAutores()
         {
-            return await _mediator.Send(new Consulta.ListaAutor());
+            var result = await _mediator.Send(new Consulta.ListaAutor());
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AutorDto>> GetAutorLibro(string id)
+        public async Task<ActionResult<AutorDto>> GetAutorLibro(int id)
         {
             return await _mediator.Send(new ConsultarFiltro.AutorUnico { AutoGuid = id });
         }

@@ -7,14 +7,33 @@ package autor_imagen.proto;
 service AutorImagenService {
   // Guarda una imagen en la base de datos
   rpc GuardarImagen (ImagenRequest) returns (Respuesta);
+  // Obtiene una imagen específica por idAutorLibro
+  rpc ObtenerImagen (ImagenConsultaRequest) returns (ImagenResponse);
+  // Obtiene todas las imágenes
+  rpc ObtenerTodasImagenes (EmptyRequest) returns (ListaImagenesResponse);
 }
 
 message ImagenRequest {
+	bytes contenido = 1;
+	int64 idAutorLibro = 2;
+}
+
+message Respuesta {
+    string mensaje = 1;
+}
+
+message ImagenConsultaRequest {
+  int64 idAutorLibro = 1;
+}
+
+message ImagenResponse {
   bytes contenido = 1;
   int64 idAutorLibro = 2;
 }
 
-message Respuesta {
-  // Mensaje de respuesta
-  string mensaje = 1;
+message EmptyRequest {
+}
+
+message ListaImagenesResponse {
+  repeated ImagenResponse imagenes = 1;
 }
