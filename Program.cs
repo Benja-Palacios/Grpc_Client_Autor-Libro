@@ -1,5 +1,6 @@
 using Api.Microservice.Autor.Aplicacion;
 using Api.Microservice.Autor.Persistencia;
+using Google.Protobuf.WellKnownTypes;
 using Grpc_AutorImagen;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,12 @@ builder.Services.AddGrpcClient<AutorImagenService.AutorImagenServiceClient>(o =>
 builder.Services.AddMediatR(typeof(Nuevo.Manejador).Assembly);
 builder.Services.AddAutoMapper(typeof(Consulta.Manejador));
 
+builder.Services.AddCors(options => {
+    options.AddPolicy("NuevaPolitica" , app => {
+        app.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,6 +43,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("NuevaPolitica");
 
 app.UseHttpsRedirection();
 

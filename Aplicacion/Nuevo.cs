@@ -66,7 +66,7 @@ namespace Api.Microservice.Autor.Aplicacion
                             var grpcRequest = new ImagenRequest
                             {
                                 Contenido = Google.Protobuf.ByteString.CopyFrom(imagenBytes),
-                                IdAutorLibro = autorLibro.AutorLibroId
+                                IdAutorLibro = autorLibro.AutorLibroGuid
                             };
                             var grpcResponse = await _grpcClient.GuardarImagenAsync(grpcRequest);
 

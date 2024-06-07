@@ -35,7 +35,7 @@ namespace Api.Microservice.Autor.Aplicacion
                 {
                     var grpcRequest = new ImagenConsultaRequest
                     {
-                        IdAutorLibro = autor.AutorLibroId
+                        IdAutorLibro = autor.AutorLibroGuid
                     };
 
                     var grpcResponse = await _grpcClient.ObtenerImagenAsync(grpcRequest);

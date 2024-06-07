@@ -11,7 +11,7 @@ namespace Api.Microservice.Autor.Aplicacion
     {
         public class AutorUnico : IRequest<AutorDto>
         {
-            public int AutoGuid { get; set; }
+            public string AutoGuid { get; set; }
         }
 
         public class Manejador : IRequestHandler<AutorUnico, AutorDto>
@@ -37,7 +37,7 @@ namespace Api.Microservice.Autor.Aplicacion
                 // Obtener imagen asociada al autor
                 var grpcRequest = new ImagenConsultaRequest
                 {
-                    IdAutorLibro = autor.AutorLibroId
+                    IdAutorLibro = autor.AutorLibroGuid
                 };
                 var grpcResponse = await _grpcClient.ObtenerImagenAsync(grpcRequest);
 

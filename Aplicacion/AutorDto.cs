@@ -8,6 +8,8 @@
         public DateTime? FechaNacimiento { get; set; }
         public IFormFile Imagen { get; set; }
         public byte[] Imagenes { get; set; }
+        public string AutorLibroGuid { get; set; }
+
 
     }
 }

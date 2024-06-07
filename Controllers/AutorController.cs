@@ -40,7 +40,7 @@ namespace Api.Microservice.Autor.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AutorDto>> GetAutorLibro(int id)
+        public async Task<ActionResult<AutorDto>> GetAutorLibro(string id)
         {
             return await _mediator.Send(new ConsultarFiltro.AutorUnico { AutoGuid = id });
         }

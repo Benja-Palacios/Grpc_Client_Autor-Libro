@@ -15,7 +15,7 @@ service AutorImagenService {
 
 message ImagenRequest {
 	bytes contenido = 1;
-	int64 idAutorLibro = 2;
+	string idAutorLibro = 2;
 }
 
 message Respuesta {
@@ -23,12 +23,12 @@ message Respuesta {
 }
 
 message ImagenConsultaRequest {
-  int64 idAutorLibro = 1;
+  string idAutorLibro = 1;
 }
 
 message ImagenResponse {
   bytes contenido = 1;
-  int64 idAutorLibro = 2;
+  string idAutorLibro = 2;
 }
 
 message EmptyRequest {
