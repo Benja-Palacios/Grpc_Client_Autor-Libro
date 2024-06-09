@@ -28,7 +28,8 @@ namespace Api.Microservice.Autor.Aplicacion
             }
             public async Task<AutorDto> Handle(AutorUnico request, CancellationToken cancellationToken)
             {
-                var autor = await _context.AutorLibros.FindAsync(request.AutoGuid);
+                var autor = await _context.AutorLibros
+                                             .FirstOrDefaultAsync(a => a.AutorLibroGuid == request.AutoGuid);
                 if (autor == null)
                     throw new Exception("No se encontró el autor.");
 
