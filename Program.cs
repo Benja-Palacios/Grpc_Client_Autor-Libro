@@ -1,16 +1,18 @@
 using Api.Microservice.Autor.Aplicacion;
 using Api.Microservice.Autor.Persistencia;
-using Google.Protobuf.WellKnownTypes;
+using AutoMapper;
 using Grpc_AutorImagen;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Polly;
+using Polly.Extensions.Http;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -21,16 +23,30 @@ builder.Services.AddDbContext<ContextoAutor>(options =>
     )
 );
 
+// Configura Polly para el cliente gRPC
+var retryPolicy = Policy.Handle<Exception>()
+    .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+
+var fallbackPolicy = Policy<Grpc_AutorImagen.ImagenResponse>.Handle<Exception>()
+    .FallbackAsync(new Grpc_AutorImagen.ImagenResponse(), (exception, context) =>
+    {
+        // Log the error or handle it accordingly
+        return Task.CompletedTask;
+    });
+
 builder.Services.AddGrpcClient<AutorImagenService.AutorImagenServiceClient>(o =>
 {
     o.Address = new Uri("http://localhost:5185"); // Dirección del servicio gRPC
 });
 
+// Registra las políticas en el contenedor de dependencias
+builder.Services.AddSingleton<IAsyncPolicy<Grpc_AutorImagen.ImagenResponse>>(fallbackPolicy);
+
 builder.Services.AddMediatR(typeof(Nuevo.Manejador).Assembly);
 builder.Services.AddAutoMapper(typeof(Consulta.Manejador));
 
 builder.Services.AddCors(options => {
-    options.AddPolicy("NuevaPolitica" , app => {
+    options.AddPolicy("NuevaPolitica", app => {
         app.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
